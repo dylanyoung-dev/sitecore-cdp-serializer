@@ -1,0 +1,44 @@
+{
+  "name": "sitecore-cdp-personalize-cli",
+  "version": "1.0.0",
+  "description": "cdp-personalize-cli",
+  "type": "module",
+  "exports": "./lib/index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "build:local": "npm run build && npm link --force",
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' ./src/bin/index.ts",
+    "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" ./src/bin/index.ts authenticate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "cdp-personalize-cli": "./lib/bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dylanyoung-dev/cdp-personalize-cli.git"
+  },
+  "engines": {
+    "node": ">=14.16"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dylanyoung-dev/cdp-personalize-cli/issues"
+  },
+  "homepage": "https://github.com/dylanyoung-dev/cdp-personalize-cli#readme",
+  "dependencies": {
+    "chalk": "4.1.2",
+    "commander": "^9.4.0",
+    "configstore": "6.0.0",
+    "node-fetch": "3.2.10"
+  },
+  "devDependencies": {
+    "@types/node": "18.6.3",
+    "@types/configstore": "6.0.0",
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}
