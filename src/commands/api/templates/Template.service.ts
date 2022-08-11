@@ -32,7 +32,7 @@ const GetAllTemplates = async (templateType: string) => {
   });
 
   if (response.ok) {
-    console.log('success');
+    logline(chalk.green('success'));
     logline(await response.json());
   } else {
     console.log(chalk.red('Failed to retrieve templates'));
@@ -105,9 +105,15 @@ const initTemplateCommands = (program: Command, config: Configstore) => {
   templateCommands
     .command('get')
     .option('--friendlyId <friendlyId>', 'Friendly Id of the template to retrieve')
+    .option('--templateRef <templateRef>', 'Template Reference of the template to retrieve')
     .description('Get a single template')
     .action(async (options) => {
-      await GetByFriendlyId(options.friendlyId);
+      if (options.friendlyId) {
+        await GetByFriendlyId(options.friendlyId);
+      }
+
+      if (options.templateRef) {
+      }
     });
 
   templateCommands
