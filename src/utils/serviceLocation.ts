@@ -16,8 +16,6 @@ const initServiceLocation = ({ location, config }: ServiceLocationProps) => {
   } else {
     console.log(chalk.red('Service location not supported'));
   }
-
-  console.log(config.get('serviceUrl'));
 };
 
 export { initServiceLocation };

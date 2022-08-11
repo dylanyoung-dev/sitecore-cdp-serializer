@@ -1,2 +1,31 @@
-# cdp-personalize-cli
-cdp-personalize-cli
+TODO: Add logo and badges here
+
+## Installation
+
+Sitecore CDP/Personalize CLI requires [Node.js](https://nodejs.org) version 14 or above. To install, run the following commands from any directory in your terminal:
+
+```bash
+npm install cdp-personalize-cli -g
+```
+
+When using the CLI in a CI environment we recommend installing it locally as a development dependency, instead of globally. To install locally, run the following command from the root directory of your project:
+
+```bash
+npx install --save-dev cdp-personalize-cli
+```
+
+**Important:** Running `npm install cdp-personalize-cli -g` in CI means you're always installing the latest version of the CLI, including breaking changes. When you install locally and use a [lock file](https://docs.npmjs.com/cli/v7/commands/npm-ci) you guarantee reproducible builds.
+
+## Usage
+
+## Documentation
+
+## Commands
+
+### [api](/docs/commands/api.md)
+
+Run Sitecore CDP/Personalize API's.
+
+### [deploy](/docs/commands/deploy.md)
+
+Commands to pick up local artifacts and deploy to a Sitecore CDP/Personalize tenant.
