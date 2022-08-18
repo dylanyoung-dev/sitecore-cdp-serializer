@@ -1,9 +1,8 @@
 {
   "name": "sitecore-cdp-personalize-cli",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "cdp-personalize-cli",
   "type": "module",
-  "private": true,
   "exports": "./lib/index.js",
   "scripts": {
     "build": "tsc -p .",
