@@ -1,26 +1,27 @@
 interface Template {
+  clientKey?: string;
   href?: string;
   ref?: string;
   name: string;
   description: string;
   modifiedByRef?: string;
   modifiedAt?: string;
-  revision: number;
-  revisionComment: string;
-  archived: boolean;
+  revision?: number;
+  revisionComment?: string;
+  archived?: boolean;
   friendlyId: string;
   type: string;
   status: string;
   icon: string;
-  additionalFields: {
+  additionalFields?: {
     decisionOutputReference: string;
     decisionReturnType: string;
   };
   templateElements: TemplateElement[];
-  render: boolean;
+  render?: boolean;
   defaultTemplate: boolean;
-  tags: string[];
-  customTemplate: boolean;
+  tags?: string[];
+  customTemplate?: boolean;
 }
 
 interface TemplateElement {
