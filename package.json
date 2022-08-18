@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "cdp-personalize-cli",
   "type": "module",
+  "private": true,
   "exports": "./lib/index.js",
   "scripts": {
     "build": "tsc -p .",
