@@ -6,7 +6,6 @@ import fs from 'fs';
 import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
 import Configstore from 'configstore';
 import { TemplateService } from '../../commands/api/templates/Template.service.js';
-import { stringify } from 'querystring';
 import { diffString } from 'json-diff';
 
 const deployTemplates = async (artifactDirectory: string, config: Configstore) => {
@@ -28,7 +27,7 @@ const deployTemplates = async (artifactDirectory: string, config: Configstore) =
   }
 
   await deployDecisionTemplates(artifactDirectory, config);
-  await deployWebTemplates(artifactDirectory, config);
+  //await deployWebTemplates(artifactDirectory, config);
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
