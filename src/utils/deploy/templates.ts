@@ -28,11 +28,12 @@ const deployTemplates = async (artifactDirectory: string, config: Configstore) =
   }
 
   await deployDecisionTemplates(artifactDirectory, config);
+  await deployWebTemplates(artifactDirectory, config);
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
 
-const deployDecisionTemplates = async (artifactDirectory: string, config: Configstore) => {
+const deployDecisionTemplates = async (artifactDirectory: string, config: Configstore): Promise<void> => {
   const templateService = TemplateService(config);
   const decisionFolder = path.join(artifactDirectory, 'templates', 'decision');
   const clientKey: string = config.get('clientKey');
@@ -53,7 +54,35 @@ const deployDecisionTemplates = async (artifactDirectory: string, config: Config
   await Promise.all(
     templatesToRun.map(
       async (templateToRun) =>
-        await deployIndividualTemplates(templateToRun, decisionFolder, templateService, clientKey)
+        await deployIndividualTemplates(templateToRun, decisionFolder, 'DECISION', templateService, clientKey)
+    )
+  );
+
+  logline(chalk.greenBright(`Finished deploying decision templates`));
+};
+
+const deployWebTemplates = async (artifactDirectory: string, config: Configstore): Promise<void> => {
+  const templateService = TemplateService(config);
+  const decisionFolder = path.join(artifactDirectory, 'templates', 'decision');
+  const clientKey: string = config.get('clientKey');
+
+  logline(chalk.greenBright(`Starting to deploy decision templates`));
+
+  if (!(await checkFolder(decisionFolder))) {
+    logline(chalk.red(`Decision templates folder doesn't exist - will not deploy`));
+    return;
+  }
+
+  const templatesToRun: string[] = await getFolders(decisionFolder);
+
+  if (templatesToRun.length === 0) {
+    logline(chalk.red(`No decision templates found - will not deploy`));
+  }
+
+  await Promise.all(
+    templatesToRun.map(
+      async (templateToRun) =>
+        await deployIndividualTemplates(templateToRun, decisionFolder, 'WEB', templateService, clientKey)
     )
   );
 
@@ -62,19 +91,21 @@ const deployDecisionTemplates = async (artifactDirectory: string, config: Config
 
 const deployIndividualTemplates = async (
   templateToRun: string,
-  decisionFolder: string,
+  folderPath: string,
+  templateType: string,
   templateService: any,
   clientKey: string
 ) => {
-  const templateFiles = await getFolderFiles(path.join(decisionFolder, templateToRun));
+  const templateFiles = await getFolderFiles(path.join(folderPath, templateToRun));
 
   // TODO: need a template validation function in the CLI to validate the template
   let template: Template = JSON.parse(
-    fs.readFileSync(path.join(decisionFolder, templateToRun, 'config.json'), 'utf8')
+    fs.readFileSync(path.join(folderPath, templateToRun, 'config.json'), 'utf8')
   ) as Template;
 
   if (template) {
-    const jsFileContents = await fs.promises.readFile(path.join(decisionFolder, templateToRun, 'file.js'), 'utf8');
+    // Need to make dynamic
+    const jsFileContents = await fs.promises.readFile(path.join(folderPath, templateToRun, 'file.js'), 'utf8');
 
     if (!jsFileContents) {
       logline(chalk.red(`Decision template file missing - Skip Deploy`));

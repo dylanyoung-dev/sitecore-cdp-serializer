@@ -35,8 +35,6 @@ const TemplateService = (config: Configstore) => {
       logline(chalk.green('success'));
       let templates: Template[] = (await response.json()) as Template[];
 
-      logline(chalk.green(JSON.stringify(templates, null, 2)));
-
       return templates;
     } else {
       console.log(chalk.red('Failed to retrieve templates'));
@@ -158,7 +156,11 @@ const initTemplateCommands = (program: Command, config: Configstore) => {
     .option('-t, --type <type>', 'Type of templates to retrieve (Web, Decision, Audience,  etc.)')
     .description('List all Templates')
     .action(async (options) => {
-      await templateService.GetAllTemplates(options.templateType);
+      let templates: Template[] | undefined = await templateService.GetAllTemplates(options.templateType);
+
+      if (templates) {
+        logline(JSON.stringify(templates, null, 2));
+      }
     });
 
   // Nested (Sub) Commands
@@ -169,11 +171,13 @@ const initTemplateCommands = (program: Command, config: Configstore) => {
     .option('--templateRef <templateRef>', 'Template Reference of the template to retrieve')
     .description('Get a single template')
     .action(async (options) => {
+      let template: Template | null = null;
       if (options.friendlyId) {
-        await templateService.GetByFriendlyId(options.friendlyId);
+        template = await templateService.GetByFriendlyId(options.friendlyId);
       }
 
-      if (options.templateRef) {
+      if (template !== null) {
+        logline(JSON.stringify(template, null, 2));
       }
     });
 

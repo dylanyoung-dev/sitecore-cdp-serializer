@@ -1,7 +1,7 @@
 {
   "name": "sitecore-cdp-personalize-cli",
   "version": "0.1.1",
-  "description": "cdp-personalize-cli",
+  "description": "A Sitecore CDP/Personalize CLI to abstract the APIs related to Tenant asset management and automated deployments from Source Control and/or physical files",
   "type": "module",
   "exports": "./lib/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "cdp-personalize-cli": "./lib/bin/index.js"
+    "sitecore-cdp-personalize-cli": "./lib/bin/index.js"
   },
   "repository": {
     "type": "git",
