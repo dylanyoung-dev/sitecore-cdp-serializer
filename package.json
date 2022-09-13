@@ -1,7 +1,7 @@
 {
-  "name": "sitecore-cdp-personalize-cli",
-  "version": "0.1.1",
-  "description": "A Sitecore CDP/Personalize CLI to abstract the APIs related to Tenant asset management and automated deployments from Source Control and/or physical files",
+  "name": "sitecore-cdp-serializer",
+  "version": "0.1.2",
+  "description": "A Sitecore CDP/Personalize Serialization tool to abstract the APIs related to Tenant asset management and automated deployments from Source Control and/or physical files",
   "type": "module",
   "exports": "./lib/index.js",
   "scripts": {
@@ -12,11 +12,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "sitecore-cdp-personalize-cli": "./lib/bin/index.js"
+    "sitecore-cdp-serializer": "./lib/bin/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dylanyoung-dev/cdp-personalize-cli.git"
+    "url": "git+https://github.com/dylanyoung-dev/sitecore-cdp-serializer.git"
   },
   "engines": {
     "node": ">=14.16"
@@ -25,9 +25,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dylanyoung-dev/cdp-personalize-cli/issues"
+    "url": "https://github.com/dylanyoung-dev/sitecore-cdp-serializer/issues"
   },
-  "homepage": "https://github.com/dylanyoung-dev/cdp-personalize-cli#readme",
+  "homepage": "https://github.com/dylanyoung-dev/sitecore-cdp-serializer#readme",
   "dependencies": {
     "chalk": "4.1.2",
     "commander": "^9.4.0",
