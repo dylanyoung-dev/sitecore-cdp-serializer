@@ -6,6 +6,7 @@ import fs from 'fs';
 import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
 import Configstore from 'configstore';
 import { TemplateService } from '../../commands/api/templates/Template.service.js';
+import yaml from 'js-yaml';
 import { diffString } from 'json-diff';
 
 const deployTemplates = async (artifactDirectory: string, config: Configstore) => {
@@ -26,111 +27,131 @@ const deployTemplates = async (artifactDirectory: string, config: Configstore) =
     return;
   }
 
-  await deployDecisionTemplates(artifactDirectory, config);
-  //await deployWebTemplates(artifactDirectory, config);
+  await deployTemplateTypes(artifactDirectory, 'DECISION', config);
+  await deployTemplateTypes(artifactDirectory, 'WEB', config);
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
 
-const deployDecisionTemplates = async (artifactDirectory: string, config: Configstore): Promise<void> => {
+const deployTemplateTypes = async (
+  artifactDirectory: string,
+  templateType: string,
+  config: Configstore
+): Promise<void> => {
   const templateService = TemplateService(config);
-  const decisionFolder = path.join(artifactDirectory, 'templates', 'decision');
+  const templateFolder = path.join(artifactDirectory, 'templates', templateType);
   const clientKey: string = config.get('clientKey');
 
-  logline(chalk.greenBright(`Starting to deploy decision templates`));
+  logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
 
-  if (!(await checkFolder(decisionFolder))) {
-    logline(chalk.red(`Decision templates folder doesn't exist - will not deploy`));
+  if (!(await checkFolder(templateFolder))) {
+    logline(chalk.red(`${templateType} templates folder doesn't exist - will not deploy`));
     return;
   }
 
-  const templatesToRun: string[] = await getFolders(decisionFolder);
+  const templatesToRun: string[] = await getFolders(templateFolder);
 
   if (templatesToRun.length === 0) {
-    logline(chalk.red(`No decision templates found - will not deploy`));
+    logline(chalk.red(`No ${templateType} templates found - will not deploy`));
   }
 
   await Promise.all(
     templatesToRun.map(
       async (templateToRun) =>
-        await deployIndividualTemplates(templateToRun, decisionFolder, 'DECISION', templateService, clientKey)
+        await deployIndividualTemplates(templateToRun, templateFolder, templateType, templateService)
     )
   );
 
-  logline(chalk.greenBright(`Finished deploying decision templates`));
+  logline(chalk.greenBright(`Finished deploying ${templateType} templates`));
 };
 
-const deployWebTemplates = async (artifactDirectory: string, config: Configstore): Promise<void> => {
-  const templateService = TemplateService(config);
-  const decisionFolder = path.join(artifactDirectory, 'templates', 'decision');
-  const clientKey: string = config.get('clientKey');
+const getConfigFile = async (startPath: string) => {
+  // Read File Sync by yml yaml or json from the file system
+  let extension = getExtensions(startPath, 'config');
 
-  logline(chalk.greenBright(`Starting to deploy decision templates`));
-
-  if (!(await checkFolder(decisionFolder))) {
-    logline(chalk.red(`Decision templates folder doesn't exist - will not deploy`));
-    return;
+  if (extension === undefined) {
+    return null;
   }
 
-  const templatesToRun: string[] = await getFolders(decisionFolder);
+  let configContents: Template = yaml.load(
+    fs.readFileSync(path.join(startPath, `config.${extension}`), 'utf8')
+  ) as Template;
 
-  if (templatesToRun.length === 0) {
-    logline(chalk.red(`No decision templates found - will not deploy`));
+  return configContents;
+};
+
+const getExtensions = (startDirectory: string, fileEntry: string): string | undefined => {
+  const files = fs.readdirSync(startDirectory);
+
+  const filename: string | undefined = files.find((file) => {
+    // return the first files that include given entry
+    return file.includes(fileEntry);
+  });
+
+  if (filename === undefined) {
+    return undefined;
   }
 
-  await Promise.all(
-    templatesToRun.map(
-      async (templateToRun) =>
-        await deployIndividualTemplates(templateToRun, decisionFolder, 'WEB', templateService, clientKey)
-    )
-  );
+  const extension = filename.split('.').pop();
 
-  logline(chalk.greenBright(`Finished deploying decision templates`));
+  return extension;
+};
+
+const generateTemplateElements = (template: Template, startDirectory: string, templateType: string): Template => {
+  const files = fs.readdirSync(startDirectory);
+
+  if (!files) {
+    return template;
+  }
+
+  const filenames: string[] = files.filter((value) => value.match(/file.(js|html|css|ftl)/));
+
+  if (filenames.length > 0) {
+    // If empty array, then initialize
+    if (template.templateElements == undefined || template.templateElements.length == 0) {
+      template.templateElements = [];
+    }
+
+    filenames.forEach((file, item) => {
+      let fileContents = fs.readFileSync(path.join(startDirectory, file), 'utf8');
+      let extension = file.split('.').pop();
+
+      if (extension == 'ftl') {
+        extension = 'freemarker';
+      }
+
+      if (fileContents && extension) {
+        let existingElement = template.templateElements.findIndex((element) => element.id == extension);
+
+        if (existingElement > -1) {
+          template.templateElements[existingElement].template = fileContents;
+        } else {
+          template.templateElements.push({ id: extension, template: fileContents });
+        }
+      } else {
+        logline(`There was an issue attaching file ${file} to ${template.name}`);
+      }
+    });
+  }
+
+  return template;
 };
 
 const deployIndividualTemplates = async (
   templateToRun: string,
   folderPath: string,
   templateType: string,
-  templateService: any,
-  clientKey: string
+  templateService: any
 ) => {
-  const templateFiles = await getFolderFiles(path.join(folderPath, templateToRun));
+  let template: Template | null = await getConfigFile(path.join(folderPath, templateToRun));
 
-  // TODO: need a template validation function in the CLI to validate the template
-  let template: Template = JSON.parse(
-    fs.readFileSync(path.join(folderPath, templateToRun, 'config.json'), 'utf8')
-  ) as Template;
-
-  if (template) {
-    // Need to make dynamic
-    const jsFileContents = await fs.promises.readFile(path.join(folderPath, templateToRun, 'file.js'), 'utf8');
-
-    if (!jsFileContents) {
-      logline(chalk.red(`Decision template file missing - Skip Deploy`));
-      return;
-    }
-
-    // Check to see if this template already exists
-    let templateFromService: Template = await templateService.GetByFriendlyId(template.friendlyId);
-
-    logline(chalk.greenBright(`Deploying decision template ${template.friendlyId}`));
-
-    // This needs to be refactored :-)
-    if (template.templateElements !== undefined && template.templateElements.length > 0) {
-      let objIndexTemplateElement = template.templateElements.findIndex((obj) => obj.id === 'js');
-
-      if (objIndexTemplateElement !== -1) {
-        template.templateElements[objIndexTemplateElement].template = jsFileContents;
-      } else {
-        template.templateElements.push({ id: 'js', template: jsFileContents });
-      }
-    } else {
-      template.templateElements = [];
-      template.templateElements.push({ id: 'js', template: jsFileContents });
-    }
-
+  if (template != null) {
     let result: Template | null = null;
+
+    const templateFromService: Template = await templateService.GetByFriendlyId(template.friendlyId);
+
+    template = generateTemplateElements(template, path.join(folderPath, templateToRun), templateType);
+
     if (templateFromService) {
       logline(chalk.greenBright(`Template ${template.friendlyId} already exists in tenant - will update values`));
 
