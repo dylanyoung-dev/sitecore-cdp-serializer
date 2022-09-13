@@ -39,7 +39,7 @@ const deployTemplateTypes = async (
   config: Configstore
 ): Promise<void> => {
   const templateService = TemplateService(config);
-  const templateFolder = path.join(artifactDirectory, 'templates', templateType);
+  const templateFolder = path.join(artifactDirectory, 'templates', templateType.toLowerCase());
   const clientKey: string = config.get('clientKey');
 
   logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
