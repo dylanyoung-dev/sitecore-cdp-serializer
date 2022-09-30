@@ -1,5 +1,3 @@
-TODO: Add logo and badges here
-
 ## Installation
 
 Sitecore CDP serializer requires [Node.js](https://nodejs.org) version 14 or above. To install, run the following commands from any directory in your terminal:
