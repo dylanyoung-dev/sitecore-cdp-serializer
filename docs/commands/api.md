@@ -9,7 +9,7 @@ All authentication commands start with `auth`
 
 |   Subcommand   | Description                                                     | Parameters                                     |
 | :---------: | :-------------------------------------------------------------- | :--------------------------------------------- |
-|    login     | Required command to create access token for future CLI commands | -id, --clientId **required** <br />-s, --clientSecret **required**<br />-l, --location *optional* (defaults to EN)|
+|    login     | Required command to create access token for future CLI commands | -id, --clientId **required** <br />-s, --clientSecret **required**<br />-l, --location *optional* (defaults to EU)|
 | status | View Authentication/Service Url information             | \<none>                                        |
 | logout | Logout of the API             | \<none>                                        |
 
