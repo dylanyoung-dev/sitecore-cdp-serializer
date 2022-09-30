@@ -4,9 +4,17 @@
 
 The API commands should never be used by a public application. Your Sitecore CDP/Personalize API Username and Password should never be send to anyone you don't trust. It's recommended that you create a Service API account in your Sitecore CDP/Personalize tenant so you can have more control over revoking access in the future.
 
-## Available Commands
+## Authentication Commands
+All authentication commands start with `auth`
 
-|   Command   | Description                                                     | Parameters                                     |
+|   Subcommand   | Description                                                     | Parameters                                     |
 | :---------: | :-------------------------------------------------------------- | :--------------------------------------------- |
-|    auth     | Required command to create access token for future CLI commands | -u, --username, -p, --password, -l, --location |
-| connections | Retrieve all connections from your connected tenant             | \<none>                                        |
+|    login     | Required command to create access token for future CLI commands | -id, --clientId **required** <br />-s, --clientSecret **required**<br />-l, --location *optional* (defaults to EN)|
+| status | View Authentication/Service Url information             | \<none>                                        |
+| logout | Logout of the API             | \<none>                                        |
+
+### Example
+`npx sitecore-cdp-serializer auth login -id {Client Key} -s {API Token} -l {EU|US|APJ}`
+
+## Connections Commands
+All authentication commands start with `connections`
