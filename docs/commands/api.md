@@ -16,5 +16,5 @@ All authentication commands start with `auth`
 ### Example
 `npx sitecore-cdp-serializer auth login -id {Client Key} -s {API Token} -l {EU|US|APJ}`
 
-## Connections Commands
-All authentication commands start with `connections`
+## Connection Commands
+All connection commands start with `connections`
