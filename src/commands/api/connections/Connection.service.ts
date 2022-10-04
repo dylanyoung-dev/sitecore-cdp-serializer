@@ -19,7 +19,7 @@ const GetAllConnections = async () => {
     return;
   }
 
-  let servicePath = `https://${serviceUrl}/v3/connections`;
+  let servicePath = `https://${serviceUrl}/v2/connections`;
 
   const response: Response = await fetch(servicePath, {
     method: 'get',
