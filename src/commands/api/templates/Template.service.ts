@@ -1,9 +1,13 @@
 import Configstore from 'configstore';
-import fetch, { Response } from 'node-fetch';
-import chalk from 'chalk';
+import { Response } from 'node-fetch';
 import { Command } from 'commander';
 import { Template } from './Template.interface.js';
-import { logline } from '../../../utils/index.js';
+import {
+  logline,
+  logSuccess,
+  logError,
+  logResponse,
+} from '../../../utils/index.js';
 import { BaseService } from '../Base.service.js'
 
 const TemplateService = (config: Configstore) => {
@@ -14,15 +18,15 @@ const TemplateService = (config: Configstore) => {
       const response: Response = await baseService.Get('templates');
   
       if (response.ok) {
-        logline(chalk.green('success'));
+        logSuccess('success');
         let templates: Template[] = (await response.json()) as Template[];
   
         return templates;
       } else {
-        console.log(chalk.red('Failed to retrieve templates'));
+        logResponse(response, 'Failed to retrieve templates');
       }
     } catch (ex) {
-      logline(chalk.red(ex));
+      logError(ex);
     }
   };
 
@@ -32,16 +36,15 @@ const TemplateService = (config: Configstore) => {
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;
-
-        logline(chalk.green('Template retrieved successfully'));
+        logSuccess('Template retrieved successfully');
 
         return result;
       } else {
-        logline(chalk.red('Failed to retrieve template'));
+        logResponse(response, 'Failed to retrieve template');
         return null;
       }
     } catch (ex) {
-      logline(chalk.red(ex));
+      logError(ex);
     }
 
     return null;
@@ -50,19 +53,18 @@ const TemplateService = (config: Configstore) => {
   const CreateTemplate = async (template: Template): Promise<Template | null> => {
 
     try {
-      const response: Response = await baseService.Post('templates', JSON.stringify(template));
+      const response: Response = await baseService.Post('templates', []);
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;
 
         return result;
       } else {
-        logline(chalk.red('Failed to create template'));
-        logline(JSON.stringify(await response.json()));
+        logResponse(response, 'Failed to create template');
         return null;
       }
     } catch (ex) {
-      logline(chalk.red(ex));
+      logError(ex);
     }
     
     return null;
@@ -70,19 +72,18 @@ const TemplateService = (config: Configstore) => {
 
   const UpdateTemplate = async (template: Template): Promise<Template | null> => {
     try {
-      const response: Response = await baseService.Put(`templates/${template.ref}`, JSON.stringify(template));
+      const response: Response = await baseService.Put(`templates/${template.ref}`, template);
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;
 
         return result;
       } else {
-        logline(chalk.red('Failed to update template'));
-        logline(JSON.stringify(await response.json()));
+        logResponse(response, 'Failed to update template');
         return null;
       }
     } catch (ex) {
-      logline(chalk.red(ex));
+      logError(ex);
     }
 
     return null;

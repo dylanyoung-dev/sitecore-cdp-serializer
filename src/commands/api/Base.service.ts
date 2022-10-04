@@ -11,7 +11,7 @@
      const credentials: AuthToken = config.get('credentials');
      const version = "v3"; // todo: config option
  
-     const Fetch = async(method: string, path: string, body: string | null) => {
+     const Fetch = async(method: string, path: string, body: object | null | undefined) => {
          if (!serviceUrl) {
              throw 'Service URL not set, re-run auth command';
          }
@@ -19,10 +19,14 @@
          if (!credentials) {
              throw 'You must run the auth command first to initialize the CLI';
          }
+
+         let data = body !== null && body !== undefined
+            ? JSON.stringify(body)
+            : null;
  
          return await fetch(`https://${serviceUrl}/${version}/${path}`, {
              method,
-             body,
+             body: data,
              headers: {
                Authorization: `Bearer ${credentials.access_token}`,
                'Content-Type': 'application/json',
@@ -34,15 +38,15 @@
          return await Fetch("get", path, null);
      }
  
-     const Post = async(path: string, body: string | null) => {
+     const Post = async(path: string, body: object | null | undefined) => {
          return await Fetch("post", path, body);
      }
  
-     const Put = async(path: string, body: string | null) => {
+     const Put = async(path: string, body: object | null | undefined) => {
          return await Fetch("put", path, body);
      }
  
-     const Delete = async(path: string, body: string | null) => {
+     const Delete = async(path: string, body: object | null | undefined) => {
          return await Fetch("delete", path, body);
      }
  
