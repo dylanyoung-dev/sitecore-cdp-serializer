@@ -11,11 +11,11 @@ import {
 import { BaseService } from '../Base.service.js'
 
 const TemplateService = (config: Configstore) => {
-  const baseService = BaseService(config, 'v3');
+  const baseService = BaseService(config);
   
   const GetAllTemplates = async (templateType: string) => {
     try {
-      const response: Response = await baseService.Get('templates');
+      const response: Response = await baseService.Get('v3/templates');
   
       if (response.ok) {
         logSuccess('success');
@@ -32,7 +32,7 @@ const TemplateService = (config: Configstore) => {
 
   const GetByFriendlyId = async (friendlyId: string): Promise<Template | null> => {
     try {
-      const response: Response = await baseService.Get(`templates/${friendlyId}`);
+      const response: Response = await baseService.Get(`v3/templates/${friendlyId}`);
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;
@@ -53,7 +53,7 @@ const TemplateService = (config: Configstore) => {
   const CreateTemplate = async (template: Template): Promise<Template | null> => {
 
     try {
-      const response: Response = await baseService.Post('templates', []);
+      const response: Response = await baseService.Post('v3/templates', []);
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;
@@ -72,7 +72,7 @@ const TemplateService = (config: Configstore) => {
 
   const UpdateTemplate = async (template: Template): Promise<Template | null> => {
     try {
-      const response: Response = await baseService.Put(`templates/${template.ref}`, template);
+      const response: Response = await baseService.Put(`v3/templates/${template.ref}`, template);
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;

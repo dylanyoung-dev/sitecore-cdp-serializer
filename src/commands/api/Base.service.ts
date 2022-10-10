@@ -6,10 +6,9 @@
  import { AuthToken } from './auth/Auth.interface.js';
  import fetch from 'node-fetch';
  
- const BaseService = (config: Configstore, vers: string) => {
+ const BaseService = (config: Configstore) => {
      const serviceUrl = config.get('serviceUrl');
      const credentials: AuthToken = config.get('credentials');
-     const version = vers;
  
      const Fetch = async(method: string, path: string, body: object | null | undefined) => {
          if (!serviceUrl) {
@@ -24,7 +23,7 @@
             ? JSON.stringify(body)
             : null;
  
-         return await fetch(`https://${serviceUrl}/${version}/${path}`, {
+         return await fetch(`https://${serviceUrl}/${path}`, {
              method,
              body: data,
              headers: {
