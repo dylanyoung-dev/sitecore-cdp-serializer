@@ -6,10 +6,10 @@
  import { AuthToken } from './auth/Auth.interface.js';
  import fetch from 'node-fetch';
  
- const BaseService = (config: Configstore) => {
+ const BaseService = (config: Configstore, vers: string) => {
      const serviceUrl = config.get('serviceUrl');
      const credentials: AuthToken = config.get('credentials');
-     const version = "v3"; // todo: config option
+     const version = vers;
  
      const Fetch = async(method: string, path: string, body: object | null | undefined) => {
          if (!serviceUrl) {

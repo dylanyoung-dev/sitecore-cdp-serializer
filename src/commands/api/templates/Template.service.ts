@@ -11,7 +11,7 @@ import {
 import { BaseService } from '../Base.service.js'
 
 const TemplateService = (config: Configstore) => {
-  const baseService = BaseService(config);
+  const baseService = BaseService(config, 'v3');
   
   const GetAllTemplates = async (templateType: string) => {
     try {
