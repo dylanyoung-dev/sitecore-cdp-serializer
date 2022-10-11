@@ -42,12 +42,12 @@ const deployTemplateTypes = async (
   const templateFolder = path.join(artifactDirectory, 'templates', templateType.toLowerCase());
   const clientKey: string = config.get('clientKey');
 
-  logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
-
   if (!(await checkFolder(templateFolder))) {
     logline(chalk.red(`${templateType} templates folder doesn't exist - will not deploy`));
     return;
   }
+
+  logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
 
   const templatesToRun: string[] = await getFolders(templateFolder);
 

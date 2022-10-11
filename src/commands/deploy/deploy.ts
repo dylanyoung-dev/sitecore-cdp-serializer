@@ -16,6 +16,7 @@ const deploy = async ({ artifactPath = './artifacts' }: DeployProps) => {
 
   if (!(await checkFolder(artifactDirectory))) {
     logline(chalk.red(`Artifacts folder doesn't exist`));
+    return;
   }
 
   await deployTemplates(artifactDirectory, globalConfig);
