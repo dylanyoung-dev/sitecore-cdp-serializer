@@ -1,15 +1,15 @@
 import chalk from 'chalk';
 import path from 'path';
 import { logline } from '../command-helpers.js';
+import { getConfigFile } from '../io.js';
 import { checkFolder, getFolderFiles, getFolders } from './helpers.js';
 import fs from 'fs';
 import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
 import Configstore from 'configstore';
 import { TemplateService } from '../../commands/api/templates/Template.service.js';
-import yaml from 'js-yaml';
 import { diffString } from 'json-diff';
 
-const deployTemplates = async (artifactDirectory: string, config: Configstore) => {
+const deployAllTemplates = async (artifactDirectory: string, config: Configstore) => {
   const templateService = TemplateService(config);
   const templateFolder = path.join(artifactDirectory, 'templates');
 
@@ -27,20 +27,45 @@ const deployTemplates = async (artifactDirectory: string, config: Configstore) =
     return;
   }
 
-  await deployTemplateTypes(artifactDirectory, 'DECISION', config);
-  await deployTemplateTypes(artifactDirectory, 'WEB', config);
+  await deployGenericTemplates(artifactDirectory, 'DECISION', config);
+  await deployGenericTemplates(artifactDirectory, 'WEB', config);
+  await deployOfferTemplates(artifactDirectory, config);
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
 
-const deployTemplateTypes = async (
+const deployOfferTemplates = async (artifactDirectory: string, config: Configstore): Promise<void> => {
+  const templateService = TemplateService(config);
+  const templateFolder = path.join(artifactDirectory, 'templates', 'offer-templates');
+
+  logline(chalk.greenBright(`Starting to deploy Offer templates`));
+
+  if (!(await checkFolder(templateFolder))) {
+    logline(chalk.redBright(`Offer templates folder doesn't exist - will skip`));
+    return;
+  }
+
+  const templatesToRun: string[] = await getFolders(templateFolder);
+
+  if (templatesToRun.length === 0) {
+    logline(chalk.redBright(`No offer templates found - will not deploy`));
+    return;
+  }
+
+  await Promise.all(
+    templatesToRun.map(async (template) => {
+      await deployOfferTemplate(template, templateFolder, templateService);
+    })
+  );
+};
+
+const deployGenericTemplates = async (
   artifactDirectory: string,
   templateType: string,
   config: Configstore
 ): Promise<void> => {
   const templateService = TemplateService(config);
   const templateFolder = path.join(artifactDirectory, 'templates', templateType.toLowerCase());
-  const clientKey: string = config.get('clientKey');
 
   logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
 
@@ -53,91 +78,19 @@ const deployTemplateTypes = async (
 
   if (templatesToRun.length === 0) {
     logline(chalk.red(`No ${templateType} templates found - will not deploy`));
+    return;
   }
 
   await Promise.all(
     templatesToRun.map(
-      async (templateToRun) =>
-        await deployIndividualTemplates(templateToRun, templateFolder, templateType, templateService)
+      async (template) => await deployGenericTemplate(template, templateFolder, templateType, templateService)
     )
   );
 
   logline(chalk.greenBright(`Finished deploying ${templateType} templates`));
 };
 
-const getConfigFile = async (startPath: string) => {
-  // Read File Sync by yml yaml or json from the file system
-  let extension = getExtensions(startPath, 'config');
-
-  if (extension === undefined) {
-    return null;
-  }
-
-  let configContents: Template = yaml.load(
-    fs.readFileSync(path.join(startPath, `config.${extension}`), 'utf8')
-  ) as Template;
-
-  return configContents;
-};
-
-const getExtensions = (startDirectory: string, fileEntry: string): string | undefined => {
-  const files = fs.readdirSync(startDirectory);
-
-  const filename: string | undefined = files.find((file) => {
-    // return the first files that include given entry
-    return file.includes(fileEntry);
-  });
-
-  if (filename === undefined) {
-    return undefined;
-  }
-
-  const extension = filename.split('.').pop();
-
-  return extension;
-};
-
-const generateTemplateElements = (template: Template, startDirectory: string, templateType: string): Template => {
-  const files = fs.readdirSync(startDirectory);
-
-  if (!files) {
-    return template;
-  }
-
-  const filenames: string[] = files.filter((value) => value.match(/file.(js|html|css|ftl)/));
-
-  if (filenames.length > 0) {
-    // If empty array, then initialize
-    if (template.templateElements == undefined || template.templateElements.length == 0) {
-      template.templateElements = [];
-    }
-
-    filenames.forEach((file, item) => {
-      let fileContents = fs.readFileSync(path.join(startDirectory, file), 'utf8');
-      let extension = file.split('.').pop();
-
-      if (extension == 'ftl') {
-        extension = 'freemarker';
-      }
-
-      if (fileContents && extension) {
-        let existingElement = template.templateElements.findIndex((element) => element.id == extension);
-
-        if (existingElement > -1) {
-          template.templateElements[existingElement].template = fileContents;
-        } else {
-          template.templateElements.push({ id: extension, template: fileContents });
-        }
-      } else {
-        logline(`There was an issue attaching file ${file} to ${template.name}`);
-      }
-    });
-  }
-
-  return template;
-};
-
-const deployIndividualTemplates = async (
+const deployGenericTemplate = async (
   templateToRun: string,
   folderPath: string,
   templateType: string,
@@ -150,7 +103,7 @@ const deployIndividualTemplates = async (
 
     const templateFromService: Template = await templateService.GetByFriendlyId(template.friendlyId);
 
-    template = generateTemplateElements(template, path.join(folderPath, templateToRun), templateType);
+    template = generateTemplateElements(template, path.join(folderPath, templateToRun));
 
     if (templateFromService) {
       logline(chalk.greenBright(`Template ${template.friendlyId} already exists in tenant - will update values`));
@@ -198,4 +151,44 @@ const deployIndividualTemplates = async (
   }
 };
 
-export { deployTemplates };
+const generateTemplateElements = (template: Template, startDirectory: string): Template => {
+  const files = fs.readdirSync(startDirectory);
+
+  if (!files) {
+    return template;
+  }
+
+  const filenames: string[] = files.filter((value) => value.match(/file.(js|html|css|ftl)/));
+
+  if (filenames.length > 0) {
+    // If empty array, then initialize
+    if (template.templateElements == undefined || template.templateElements.length == 0) {
+      template.templateElements = [];
+    }
+
+    filenames.forEach((file, item) => {
+      let fileContents = fs.readFileSync(path.join(startDirectory, file), 'utf8');
+      let extension = file.split('.').pop();
+
+      if (extension == 'ftl') {
+        extension = 'freemarker';
+      }
+
+      if (fileContents && extension) {
+        let existingElement = template.templateElements.findIndex((element) => element.id == extension);
+
+        if (existingElement > -1) {
+          template.templateElements[existingElement].template = fileContents;
+        } else {
+          template.templateElements.push({ id: extension, template: fileContents });
+        }
+      } else {
+        logline(`There was an issue attaching file ${file} to ${template.name}`);
+      }
+    });
+  }
+
+  return template;
+};
+
+export { deployAllTemplates, deployGenericTemplates, deployOfferTemplates };

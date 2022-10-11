@@ -41,6 +41,8 @@ const TemplateService = (config: Configstore) => {
     }
   };
 
+  const GetOfferTemplates = async () => {};
+
   const GetByFriendlyId = async (friendlyId: string): Promise<Template | null> => {
     if (!serviceUrl) {
       logline(chalk.red('Service URL not set, re-run auth command'));

@@ -24,6 +24,12 @@ interface Template {
   customTemplate?: boolean;
 }
 
+interface OfferTemplate {
+  href?: string;
+  ref?: string;
+  name: string;
+}
+
 interface TemplateElement {
   id: string;
   template: string;
