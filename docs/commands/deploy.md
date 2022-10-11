@@ -4,12 +4,8 @@
 
 This command is useful for taking physical files and deploying them to a CDP, Personalize or CDP/Personalize tenant. Details of this command are below:
 
-## Authentication Commands
+| Command | Description                                         | Parameters                                            |
+| :-----: | :-------------------------------------------------- | :---------------------------------------------------- |
+| deploy  | Command to take physical files and deploy to Tenant | --artifactPath _optional_ (defaults to `./artifacts`) |
 
-All authentication commands start with `deploy`
-
-| Subcommand | Description                                                     | Parameters                                                                              |
-| :--------: | :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-|   login    | Required command to create access token for future CLI commands | -id, --clientId<br />-s, --clientSecret<br />-l, --location _optional_ (defaults to EU) |
-|   status   | View Authentication/Service Url information                     | \<none>                                                                                 |
-|   logout   | Logout of the API                                               | \<none>                                                                                 |
+In order to run a deploy command, you must have already run an `auth login` command to authenticate to the tenant you wish to deploy the artifacts out to.
