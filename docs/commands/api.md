@@ -35,3 +35,7 @@ All template commands start with `templates`.
 ```bash
 npx sitecore-cdp-serializer templates get --friendlyId 'sitecore_test_template_1'
 ```
+
+### Notes
+
+In order to run a templates command, you must have already run an `auth login` command to authenticate to the tenant you wish to access templates from.
