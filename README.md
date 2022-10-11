@@ -1,4 +1,5 @@
-TODO: Add logo and badges here
+![npm](https://img.shields.io/npm/dm/sitecore-cdp-serializer)
+[![npm version](https://badge.fury.io/js/sitecore-cdp-serializer.svg)](https://badge.fury.io/js/sitecore-cdp-serializer)
 
 ## Installation
 
