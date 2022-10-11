@@ -1,3 +1,6 @@
+![npm](https://img.shields.io/npm/dm/sitecore-cdp-serializer)
+[![npm version](https://badge.fury.io/js/sitecore-cdp-serializer.svg)](https://badge.fury.io/js/sitecore-cdp-serializer)
+
 ## Installation
 
 Sitecore CDP serializer requires [Node.js](https://nodejs.org) version 14 or above. To install, run the following commands from any directory in your terminal:

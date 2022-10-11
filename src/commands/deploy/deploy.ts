@@ -27,19 +27,11 @@ const initDeployCommands = (program: Command, config: Configstore) => {
 
   const deployCommands = program
     .command('deploy')
-    .option(
-      '--artifactPath <artifactPath>',
-      'Path to your CDP/Personalize Artifacts to deploy',
-      './artifacts'
-    )
+    .option('--artifactPath <artifactPath>', 'Path to your CDP/Personalize Artifacts to deploy', './artifacts')
     .description('Will consume artifacts and deploy them to CDP/Personalize tenant')
     .action(async (options) => {
       await deploy({ artifactPath: options.artifactPath });
     });
-
-  //deployCommands.command('templates').action(async (options) => {
-
-  //});
 
   return deployCommands;
 };
