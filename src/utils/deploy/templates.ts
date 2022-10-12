@@ -191,7 +191,7 @@ const deployIndividualTemplates = async (
 
       // template.status = 'PUBLISHED';
 
-      logline(JSON.stringify(template));
+      // logline(JSON.stringify(template));
       result = await templateService.CreateTemplate(template);
 
       if (result != null) {
