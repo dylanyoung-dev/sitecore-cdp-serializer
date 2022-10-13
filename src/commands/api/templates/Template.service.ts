@@ -53,7 +53,7 @@ const TemplateService = (config: Configstore) => {
   const CreateTemplate = async (template: Template): Promise<Template | null> => {
 
     try {
-      const response: Response = await baseService.Post('v3/templates', []);
+      const response: Response = await baseService.Post('v3/templates', template);
 
       if (response.ok) {
         const result: Template = (await response.json()) as Template;
