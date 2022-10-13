@@ -4,6 +4,7 @@ import { logline } from '../command-helpers.js';
 import { checkFolder, getFolderFiles, getFolders } from './helpers.js';
 import fs from 'fs';
 import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
+import { TemplateType } from '../../commands/api/templates/TemplateType.js'
 import Configstore from 'configstore';
 import { TemplateService } from '../../commands/api/templates/Template.service.js';
 import yaml from 'js-yaml';
@@ -27,8 +28,9 @@ const deployTemplates = async (artifactDirectory: string, config: Configstore) =
     return;
   }
 
-  await deployTemplateTypes(artifactDirectory, 'DECISION', config);
-  await deployTemplateTypes(artifactDirectory, 'WEB', config);
+  await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
+  await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
+  await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
@@ -42,12 +44,12 @@ const deployTemplateTypes = async (
   const templateFolder = path.join(artifactDirectory, 'templates', templateType.toLowerCase());
   const clientKey: string = config.get('clientKey');
 
-  logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
-
   if (!(await checkFolder(templateFolder))) {
     logline(chalk.red(`${templateType} templates folder doesn't exist - will not deploy`));
     return;
   }
+
+  logline(chalk.greenBright(`Starting to deploy ${templateType} templates`));
 
   const templatesToRun: string[] = await getFolders(templateFolder);
 
@@ -187,9 +189,10 @@ const deployIndividualTemplates = async (
     } else {
       logline(chalk.greenBright(`Template ${template.friendlyId} does not exist in the tenant - will create`));
 
-      template.status = 'PUBLISHED';
+      // template.status = 'PUBLISHED';
 
-      result = templateService.CreateTemplate(template);
+      // logline(JSON.stringify(template));
+      result = await templateService.CreateTemplate(template);
 
       if (result != null) {
         logline(chalk.greenBright(`Template ${template.friendlyId} successfully deployed`));

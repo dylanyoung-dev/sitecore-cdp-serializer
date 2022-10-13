@@ -3,7 +3,12 @@ import { AuthToken } from './Auth.interface.js';
 import fetch, { Response } from 'node-fetch';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { initServiceLocation, log, logline } from '../../../utils/index.js';
+import {
+  initServiceLocation,
+  logline,
+  logSuccess,
+  logError,
+} from '../../../utils/index.js';
 
 let globalConfig: Configstore;
 
@@ -35,10 +40,10 @@ const Authenticate = async (clientId: string, clientSecret: string) => {
     if (authToken) {
       globalConfig.set('credentials', authToken);
 
-      logline(chalk.green('Token Stored for future uses'));
+      logSuccess('Token Stored for future uses');
     }
   } else {
-    logline(chalk.red('Authentication Failed'));
+    logError('Authentication Failed');
   }
 };
 

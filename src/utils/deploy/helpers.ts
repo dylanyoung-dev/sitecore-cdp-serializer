@@ -3,14 +3,12 @@ import fs from 'fs';
 import { logline } from '../command-helpers.js';
 
 const checkFolder = async (folder: string): Promise<boolean> => {
-  fs.access(folder, (err) => {
-    if (err) {
-      logline(chalk.red(`Directory does not exist`));
-      return false;
-    }
-  });
+  try {
+    await fs.promises.access(folder);
+    return true
+  } catch (ex) {}
 
-  return true;
+  return false;
 };
 
 const getFolders = async (folder: string): Promise<string[]> => {
