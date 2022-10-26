@@ -1,5 +1,6 @@
 export enum TemplateType {
-    Decision = 'DECISION',
-    Web = 'WEB',
-    Audience = 'AUDIENCE'
+    All = 'all',
+    Audience = 'audience',
+    Decision = 'decision',
+    Web = 'web',
 }

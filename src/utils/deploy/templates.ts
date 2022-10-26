@@ -10,7 +10,7 @@ import { TemplateService } from '../../commands/api/templates/Template.service.j
 import yaml from 'js-yaml';
 import { diffString } from 'json-diff';
 
-const deployTemplates = async (artifactDirectory: string, config: Configstore) => {
+const deployTemplates = async (artifactDirectory: string, templateType: TemplateType, config: Configstore) => {
   const templateService = TemplateService(config);
   const templateFolder = path.join(artifactDirectory, 'templates');
 
@@ -28,9 +28,21 @@ const deployTemplates = async (artifactDirectory: string, config: Configstore) =
     return;
   }
 
-  await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
-  await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
-  await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
+  switch(templateType) {
+    case TemplateType.Audience:
+      await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
+      break;
+    case TemplateType.Decision:
+      await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
+      break;
+    case TemplateType.Web:
+      await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
+      break;
+    default: 
+      await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
+      await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
+      await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
+  }
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
