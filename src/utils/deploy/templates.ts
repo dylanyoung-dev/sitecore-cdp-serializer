@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import path from 'path';
-import { logline } from '../command-helpers.js';
+import { logError, logline } from '../command-helpers.js';
 import { checkFolder, getFolderFiles, getFolders } from './helpers.js';
 import fs from 'fs';
 import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
@@ -17,31 +17,34 @@ const deployTemplates = async (artifactDirectory: string, templateType: Template
   logline(chalk.greenBright(`Starting to deploy templates`));
 
   if (!(await checkFolder(templateFolder))) {
-    logline(chalk.red(`Templates folder doesn't exist - will not deploy`));
+    logError(`Templates folder doesn't exist - will not deploy`);
     return;
   }
 
   const templateFolderTypes: string[] = await getFolders(templateFolder);
 
   if (templateFolderTypes.length === 0) {
-    logline(chalk.red(`No templates found - will not deploy`));
+    logError(`No templates found - will not deploy`);
     return;
   }
 
-  switch(templateType) {
-    case TemplateType.Audience:
-      await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
-      break;
-    case TemplateType.Decision:
-      await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
-      break;
-    case TemplateType.Web:
-      await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
-      break;
-    default: 
-      await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
-      await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
-      await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
+  if (templateType === TemplateType.All) {
+    for (let template of Object.values(TemplateType)) {
+      // skip
+      if (template  === TemplateType.All) {
+        continue;
+      }
+
+      await deployTemplateTypes(artifactDirectory, template, config);
+    }
+  } else {
+    // check if param passed in exists as a template type
+    if (!Object.values(TemplateType).includes(templateType)) {
+      logError(`Template ${templateType} is not valid`);
+      return;
+    }
+
+    await deployTemplateTypes(artifactDirectory, templateType, config);
   }
 
   logline(chalk.greenBright(`Finished deploying templates`));
@@ -56,8 +59,13 @@ const deployTemplateTypes = async (
   const templateFolder = path.join(artifactDirectory, 'templates', templateType.toLowerCase());
   const clientKey: string = config.get('clientKey');
 
+  // todo: implement offer templates
+  if (templateType === TemplateType.Offer) {
+    return;
+  }
+
   if (!(await checkFolder(templateFolder))) {
-    logline(chalk.red(`${templateType} templates folder doesn't exist - will not deploy`));
+    logError(`${templateType} templates folder doesn't exist - will not deploy`);
     return;
   }
 
@@ -66,7 +74,7 @@ const deployTemplateTypes = async (
   const templatesToRun: string[] = await getFolders(templateFolder);
 
   if (templatesToRun.length === 0) {
-    logline(chalk.red(`No ${templateType} templates found - will not deploy`));
+    logError(`No ${templateType} templates found - will not deploy`);
   }
 
   await Promise.all(
