@@ -6,7 +6,7 @@ This command is useful for taking physical files and deploying them to a CDP, Pe
 
 | Command | Description                                         | Parameters                                            |
 | :-----: | :-------------------------------------------------- | :---------------------------------------------------- |
-| deploy  | Command to take physical files and deploy to Tenant | --artifactPath _optional_ (defaults to `./artifacts`) |
+| deploy  | Command to take physical files and deploy to Tenant | --artifactPath _optional_ (defaults to `./artifacts`)<br />--templateType _optional_ (audience\|decision\|web - defaults to `all`) |
 
 ### Example
 
