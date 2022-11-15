@@ -9,7 +9,7 @@ const initOfferCommands = (program: Command, config: Configstore) => {
 
   logline('initoffer');
   const offerCommands = program
-    .command('offer')
+    .command('offerTemplates')
     .description('List all offer templates')
     .action(async () => {
       let templates: OfferTemplate[] | undefined = await offerService.GetAllOfferTemplates();
@@ -21,7 +21,7 @@ const initOfferCommands = (program: Command, config: Configstore) => {
 
   // Nested (Sub) Commands
   offerCommands
-    .command('gett')
+    .command('get')
     .option('--id <idt>', 'id of the offer template to retrieve')
     .description('Get a single template')
     .action(async (options) => {
