@@ -61,6 +61,7 @@ const deployTemplateTypes = async (
 
   // todo: implement offer templates
   if (templateType === TemplateType.Offer) {
+    logline(`folder: ${templateFolder}`)
     return;
   }
 

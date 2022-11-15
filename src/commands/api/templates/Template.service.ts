@@ -9,6 +9,9 @@ import {
   logResponse,
 } from '../../../utils/index.js';
 import { BaseService } from '../Base.service.js'
+import { OfferService } from '../offers/Offer.service.js';
+import { TemplateType } from './TemplateType.js';
+import { OfferTemplate } from '../offers/OfferTemplate.interface.js';
 
 const TemplateService = (config: Configstore) => {
   const baseService = BaseService(config);
@@ -99,13 +102,25 @@ const TemplateService = (config: Configstore) => {
 
 const initTemplateCommands = (program: Command, config: Configstore) => {
   const templateService = TemplateService(config);
+  const offerService = OfferService(config);
 
   const templateCommands = program
     .command('templates')
     .option('-t, --type <type>', 'Type of templates to retrieve (Web, Decision, Audience,  etc.)')
     .description('List all Templates')
     .action(async (options) => {
-      let templates: Template[] | undefined = await templateService.GetAllTemplates(options.templateType);
+      // offer templates are from a different call
+      if (options.type == TemplateType.Offer) {
+        let templates: OfferTemplate[] | undefined = await offerService.GetAllOfferTemplates();
+
+        if (templates) {
+          logline(JSON.stringify(templates, null, 2));
+        }
+        return;
+      }
+
+      // other templates
+      let templates: Template[] | undefined = await templateService.GetAllTemplates(options.type);
 
       if (templates) {
         logline(JSON.stringify(templates, null, 2));
