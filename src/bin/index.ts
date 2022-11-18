@@ -11,7 +11,7 @@ import { initDeployCommands } from '../commands/deploy/index.js';
 const program = new Command();
 const config = initConfig();
 
-program.version('1.0.0');
+program.version('0.1.8');
 
 initAuthCommands(program, config);
 initTemplateCommands(program, config);

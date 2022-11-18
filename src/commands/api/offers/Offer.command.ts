@@ -7,8 +7,7 @@ import { logline } from '../../../utils/index.js';
 const initOfferCommands = (program: Command, config: Configstore) => {
   const offerService = OfferService(config);
 
-  logline('initoffer');
-  const offerCommands = program
+    const offerCommands = program
     .command('offerTemplates')
     .description('List all offer templates')
     .action(async () => {
@@ -22,7 +21,7 @@ const initOfferCommands = (program: Command, config: Configstore) => {
   // Nested (Sub) Commands
   offerCommands
     .command('get')
-    .option('--id <idt>', 'id of the offer template to retrieve')
+    .option('--id <id>', 'id of the offer template to retrieve')
     .description('Get a single template')
     .action(async (options) => {
       let template: OfferTemplate | null = null;
