@@ -60,6 +60,8 @@ const deployTemplateTypes = async (
   const clientKey: string = config.get('clientKey');
 
   // todo: implement offer templates
+  // currently deploying of offer templates is blocked as the POST/PUT API
+  // is not authorized for public tokens
   if (templateType === TemplateType.Offer) {
     return;
   }

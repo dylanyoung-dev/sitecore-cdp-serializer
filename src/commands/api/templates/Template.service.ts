@@ -105,7 +105,7 @@ const initTemplateCommands = (program: Command, config: Configstore) => {
     .option('-t, --type <type>', 'Type of templates to retrieve (Web, Decision, Audience,  etc.)')
     .description('List all Templates')
     .action(async (options) => {
-      let templates: Template[] | undefined = await templateService.GetAllTemplates(options.templateType);
+      let templates: Template[] | undefined = await templateService.GetAllTemplates(options.type);
 
       if (templates) {
         logline(JSON.stringify(templates, null, 2));
