@@ -1,13 +1,16 @@
 import Configstore from 'configstore';
 import { Command } from 'commander';
-import { OfferTemplate } from "./OfferTemplate.interface.js";
+import {
+  OfferTemplate,
+  Offer,
+} from "./Offer.interface.js";
 import { OfferService } from './Offer.service.js';
 import { logline } from '../../../utils/index.js';
 
 const initOfferCommands = (program: Command, config: Configstore) => {
   const offerService = OfferService(config);
 
-    const offerCommands = program
+  const offerTemplateCommands = program
     .command('offerTemplates')
     .description('List all offer templates')
     .action(async () => {
@@ -19,14 +22,14 @@ const initOfferCommands = (program: Command, config: Configstore) => {
     });
 
   // Nested (Sub) Commands
-  offerCommands
+  offerTemplateCommands
     .command('get')
     .option('--id <id>', 'id of the offer template to retrieve')
     .description('Get a single template')
     .action(async (options) => {
       let template: OfferTemplate | null = null;
       if (options.id) {
-        template = await offerService.GetById(options.id);
+        template = await offerService.GetOfferTemplatesById(options.id);
       }
 
       if (template !== null) {
@@ -34,23 +37,33 @@ const initOfferCommands = (program: Command, config: Configstore) => {
       }
     });
 
-    // offerCommands
-    // .command('create')
-    // .requiredOption('-t, --template <template>', 'Template to create')
-    // .description('Create a new template')
-    // .action(async (options) => {
-    //   await offerService.CreateTemplate(options.template);
-    // });
+  // #region offers
+  const offerCommands = program
+    .command('offers')
+    .description('List all offers')
+    .action(async () => {
+      let offers: Offer[] | undefined = await offerService.GetAllOffers();
 
-    // offerCommands
-    // .command('templates update')
-    // .requiredOption('-t, --template <template>', 'Template to update')
-    // .description('Update a template')
-    // .action(async (options) => {
-    //   await offerService.UpdateTemplate(options.template);
-    // });
+      if (offers) {
+        logline(JSON.stringify(offers, null, 2));
+      }
+    });
 
-  return offerCommands;
+  offerCommands
+    .command('get')
+    .requiredOption('-r, --ref <ref>', 'ref of the offer')
+    .description('Get a single offer')
+    .action(async (options) => {
+      let offer: Offer | null = null;
+      if (options.ref) {
+        offer = await offerService.GetOfferByRef(options.ref);
+      }
+
+      if (offer !== null) {
+        logline(JSON.stringify(offer, null, 2));
+      }
+    });
+  // #endregion offers 
 };
 
 export { initOfferCommands }
