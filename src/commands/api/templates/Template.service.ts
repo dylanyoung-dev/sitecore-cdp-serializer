@@ -2,25 +2,26 @@ import Configstore from 'configstore';
 import { Response } from 'node-fetch';
 import { Command } from 'commander';
 import { Template } from './Template.interface.js';
-import {
-  logline,
-  logSuccess,
-  logError,
-  logResponse,
-} from '../../../utils/index.js';
-import { BaseService } from '../Base.service.js'
+import { logline, logSuccess, logError, logResponse } from '../../../utils/index.js';
+import { BaseService } from '../Base.service.js';
 
 const TemplateService = (config: Configstore) => {
   const baseService = BaseService(config);
-  
+
   const GetAllTemplates = async (templateType: string) => {
     try {
-      const response: Response = await baseService.Get('v3/templates');
-  
+      let serviceUrl = 'v3/templates';
+
+      if (templateType) {
+        serviceUrl += `?type=${templateType.toUpperCase()}`;
+      }
+
+      const response: Response = await baseService.Get(serviceUrl);
+
       if (response.ok) {
         logSuccess('success');
         let templates: Template[] = (await response.json()) as Template[];
-  
+
         return templates;
       } else {
         logResponse(response, 'Failed to retrieve templates');
@@ -51,7 +52,6 @@ const TemplateService = (config: Configstore) => {
   };
 
   const CreateTemplate = async (template: Template): Promise<Template | null> => {
-
     try {
       const response: Response = await baseService.Post('v3/templates', template);
 
@@ -66,7 +66,7 @@ const TemplateService = (config: Configstore) => {
     } catch (ex) {
       logError(ex);
     }
-    
+
     return null;
   };
 
