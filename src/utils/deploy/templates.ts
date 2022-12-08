@@ -4,7 +4,7 @@ import { logError, logline } from '../command-helpers.js';
 import { checkFolder, getFolderFiles, getFolders } from './helpers.js';
 import fs from 'fs';
 import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
-import { TemplateType } from '../../commands/api/templates/TemplateType.js'
+import { TemplateType } from '../../commands/api/templates/TemplateType.js';
 import Configstore from 'configstore';
 import { TemplateService } from '../../commands/api/templates/Template.service.js';
 import yaml from 'js-yaml';
@@ -31,7 +31,7 @@ const deployTemplates = async (artifactDirectory: string, templateType: Template
   if (templateType === TemplateType.All) {
     for (let template of Object.values(TemplateType)) {
       // skip
-      if (template  === TemplateType.All) {
+      if (template === TemplateType.All) {
         continue;
       }
 
