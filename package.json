@@ -19,7 +19,8 @@
     "url": "git+https://github.com/dylanyoung-dev/sitecore-cdp-serializer.git"
   },
   "engines": {
-    "node": ">=14.16"
+    "node": ">=16.17",
+    "npm": ">=8.15.0"
   },
   "keywords": [],
   "author": "",
