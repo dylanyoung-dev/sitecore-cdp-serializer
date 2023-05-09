@@ -39,3 +39,7 @@ npx sitecore-cdp-serializer templates get --friendlyId 'sitecore_test_template_1
 ### Notes
 
 In order to run a templates command, you must have already run an `auth login` command to authenticate to the tenant you wish to access templates from.
+
+### Warning
+
+> :warning: Currently JS Modules support only allows for a single push and once published they cannot be modified even by the API. This means that if you have already published a JS Module, you will need to delete it from the tenant before you can run a deploy command again. This is a limitation of the API and not the CLI.
