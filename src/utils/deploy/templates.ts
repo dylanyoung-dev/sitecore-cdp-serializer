@@ -1,14 +1,14 @@
 import chalk from 'chalk';
-import path from 'path';
-import { logError, logline } from '../command-helpers.js';
-import { checkFolder, getFolderFiles, getFolders } from './helpers.js';
-import fs from 'fs';
-import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
-import { TemplateType } from '../../commands/api/templates/TemplateType.js';
 import Configstore from 'configstore';
-import { TemplateService } from '../../commands/api/templates/Template.service.js';
+import fs from 'fs';
 import yaml from 'js-yaml';
 import { diffString } from 'json-diff';
+import path from 'path';
+import { Template } from '../../commands/api/templates/Template.interface.js';
+import { TemplateService } from '../../commands/api/templates/Template.service.js';
+import { TemplateType } from '../../commands/api/templates/TemplateType.js';
+import { logError, logline } from '../command-helpers.js';
+import { checkFolder, getFolders } from './helpers.js';
 
 const deployTemplates = async (artifactDirectory: string, templateType: TemplateType, config: Configstore) => {
   const templateService = TemplateService(config);
