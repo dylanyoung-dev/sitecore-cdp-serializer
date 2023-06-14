@@ -21,20 +21,21 @@ npx install --save-dev sitecore-cdp-serializer
 
 💡 Note
 
-Now supports Cloud Portal and new API Keys functionality in Sitecore Personalize: [Personalize Docs](https://doc.sitecore.com/personalize/en/developers/api/index-en.html#UUID-ac90ff74-4b6e-95e6-3e15-aeba2d72db73)
+Now supports Cloud Portal and new API Keys functionality in Sitecore Personalize:
+
+- [Personalize Developer Docs](https://doc.sitecore.com/personalize/en/developers/api/index-en.html#UUID-3febb5b9-03d8-d3a0-56ea-fc75d96afbaa)
+- [Developer Portal Change Log](https://developers.sitecore.com/changelog/personalize/developers-can-now-create-api-keys-to-access-personalize-rest-apis)
 
 ---
 
-## Usage
+<br />
 
-## Documentation
+# Commands
 
-## Commands
-
-### [api](/docs/commands/api.md)
+## [api](/docs/commands/api.md)
 
 Run Sitecore CDP/Personalize API's.
 
-### [deploy](/docs/commands/deploy.md)
+## [deploy](/docs/commands/deploy.md)
 
 Commands to pick up local artifacts and deploy to a Sitecore CDP/Personalize tenant.
