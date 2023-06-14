@@ -11,8 +11,8 @@ interface ServiceLocationProps {
 const initServiceLocation = ({ location, config, isCloudPortal, isStaging }: ServiceLocationProps) => {
   let serviceUrl: string = '';
   let authUrl: string = '';
-  if (isCloudPortal) {
-    if (isStaging) {
+  if (isCloudPortal == true) {
+    if (isStaging == true) {
       authUrl = 'auth-staging-1.sitecore-staging.cloud';
       serviceUrl = 'api-engage-dev.sitecorecloud.io';
     } else {

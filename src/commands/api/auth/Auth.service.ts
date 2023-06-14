@@ -7,12 +7,20 @@ import { initServiceLocation, logline, logSuccess, logError } from '../../../uti
 
 let globalConfig: Configstore;
 
-const Authenticate = async (clientId: string, clientSecret: string, isCloudPortal: boolean, isStaging: boolean) => {
+export const Authenticate = async (
+  clientId: string,
+  clientSecret: string,
+  isCloudPortal: boolean,
+  isStaging: boolean
+) => {
   const authUrl = globalConfig.get('authUrl');
 
   if (!authUrl) {
     logline(chalk.red('Auth URL not set, re-run auth command'));
   }
+
+  console.log(authUrl);
+  console.log(isCloudPortal);
 
   // Authentication is completely different for Cloud Portal
   if (isCloudPortal) {
@@ -21,45 +29,6 @@ const Authenticate = async (clientId: string, clientSecret: string, isCloudPorta
     await HandleBoxeverAuthentication(clientId, clientSecret, authUrl);
   }
 };
-
-// const Refresh = async (refreshToken: string, clientKey?: string) => {
-//   const serviceUrl = globalConfig.get('serviceUrl');
-
-//   if (!serviceUrl) {
-//     logline(chalk.red('Service URL not set, re-run auth command'));
-//   }
-
-//   const servicePath = `https://${serviceUrl}/v2/oauth/token`;
-
-//   const params = new URLSearchParams();
-
-//   params.append('grant_type', 'refresh_token');
-//   params.append('refresh_token', refreshToken);
-
-//   if (clientKey) {
-//     params.append('clientKey', clientKey);
-//   }
-
-//   const response: Response = await fetch(servicePath, {
-//     method: 'post',
-//     body: params,
-//   });
-
-//   if (response.ok) {
-//     let authToken: AuthToken | null = await (response.json() as Promise<AuthToken>);
-
-//     if (authToken) {
-//       globalConfig.set('credentials', authToken);
-
-//       logline(chalk.green('Token Stored'));
-//     } else {
-//       logline(chalk.red('Authentication Failed'));
-//       logline(chalk.red(await response.json()));
-//     }
-//   } else {
-//     logline(chalk.red('Refresh Token failed, please re-authenticate'));
-//   }
-// };
 
 const HandleCloudPortalAuthentication = async (
   clientId: string,
@@ -74,11 +43,7 @@ const HandleCloudPortalAuthentication = async (
   params.append('grant_type', 'client_credentials');
   params.append('client_id', clientId);
   params.append('client_secret', clientSecret);
-  if (isStaging) {
-    params.append('audience', 'https://api-staging.sitecore-staging.cloud');
-  } else {
-    params.append('audience', 'https://api.sitecorecloud.io');
-  }
+  params.append('audience', 'https://api.sitecorecloud.io');
 
   const response: Response = await fetch(servicePath, {
     method: 'post',
@@ -139,21 +104,28 @@ const initAuthCommands = (program: Command, config: Configstore) => {
     .command('login')
     .requiredOption('-id, --clientId <clientId>', 'Client Id (Client Key)')
     .requiredOption('-s, --clientSecret <clientSecret>', 'Client Secret (API Token)')
-    .option('-c, --cloudPortal <cloudPortal>', 'Cloud Portal (true, false)', 'true')
+    .option('-c, --cloudPortal', 'Add if you want to use Cloud Portal features')
     .option('-l, --location <location>', 'Service Location (EU, US, AP)', 'EU')
-    .option('--staging <staging>', 'Staging (true, false)', 'false')
+    .option('--staging', 'Add if you want to use Cloud Portal Staging (uncommon)')
     .description('Authenticate with the API')
     .action(async (options) => {
       // Init Config Variables
       initServiceLocation({
         location: options.location,
         config: config,
-        isCloudPortal: options.cloudPortal ?? true,
+        isCloudPortal: options.cloudPortal ?? false,
         isStaging: options.staging ?? false,
       });
       config.set('clientKey', options.clientkey);
 
-      await Authenticate(options.clientId, options.clientSecret, options.cloudPortal ?? true, options.staging ?? false);
+      console.log(options);
+
+      await Authenticate(
+        options.clientId,
+        options.clientSecret,
+        options.cloudPortal ?? false,
+        options.staging ?? false
+      );
     });
 
   authCommands
