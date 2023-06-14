@@ -1,6 +1,6 @@
 {
   "name": "sitecore-cdp-serializer",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "A Sitecore CDP/Personalize Serialization tool to abstract the APIs related to Tenant asset management and automated deployments from Source Control and/or physical files",
   "type": "module",
   "exports": "./lib/index.js",
