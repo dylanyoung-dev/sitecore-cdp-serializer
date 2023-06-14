@@ -1,36 +1,51 @@
 import chalk from 'chalk';
-import path from 'path';
-import { logline } from '../command-helpers.js';
-import { checkFolder, getFolderFiles, getFolders } from './helpers.js';
-import fs from 'fs';
-import { Template, TemplateElement } from '../../commands/api/templates/Template.interface.js';
-import { TemplateType } from '../../commands/api/templates/TemplateType.js'
 import Configstore from 'configstore';
-import { TemplateService } from '../../commands/api/templates/Template.service.js';
+import fs from 'fs';
 import yaml from 'js-yaml';
 import { diffString } from 'json-diff';
+import path from 'path';
+import { Template } from '../../commands/api/templates/Template.interface.js';
+import { TemplateService } from '../../commands/api/templates/Template.service.js';
+import { TemplateType } from '../../commands/api/templates/TemplateType.js';
+import { logError, logline } from '../command-helpers.js';
+import { checkFolder, getFolders } from './helpers.js';
 
-const deployTemplates = async (artifactDirectory: string, config: Configstore) => {
+const deployTemplates = async (artifactDirectory: string, templateType: TemplateType, config: Configstore) => {
   const templateService = TemplateService(config);
   const templateFolder = path.join(artifactDirectory, 'templates');
 
   logline(chalk.greenBright(`Starting to deploy templates`));
 
   if (!(await checkFolder(templateFolder))) {
-    logline(chalk.red(`Templates folder doesn't exist - will not deploy`));
+    logError(`Templates folder doesn't exist - will not deploy`);
     return;
   }
 
   const templateFolderTypes: string[] = await getFolders(templateFolder);
 
   if (templateFolderTypes.length === 0) {
-    logline(chalk.red(`No templates found - will not deploy`));
+    logError(`No templates found - will not deploy`);
     return;
   }
 
-  await deployTemplateTypes(artifactDirectory, TemplateType.Decision, config);
-  await deployTemplateTypes(artifactDirectory, TemplateType.Web, config);
-  await deployTemplateTypes(artifactDirectory, TemplateType.Audience, config);
+  if (templateType === TemplateType.All) {
+    for (let template of Object.values(TemplateType)) {
+      // skip
+      if (template === TemplateType.All) {
+        continue;
+      }
+
+      await deployTemplateTypes(artifactDirectory, template, config);
+    }
+  } else {
+    // check if param passed in exists as a template type
+    if (!Object.values(TemplateType).includes(templateType)) {
+      logError(`Template ${templateType} is not valid`);
+      return;
+    }
+
+    await deployTemplateTypes(artifactDirectory, templateType, config);
+  }
 
   logline(chalk.greenBright(`Finished deploying templates`));
 };
@@ -44,8 +59,15 @@ const deployTemplateTypes = async (
   const templateFolder = path.join(artifactDirectory, 'templates', templateType.toLowerCase());
   const clientKey: string = config.get('clientKey');
 
+  // todo: implement offer templates
+  // currently deploying of offer templates is blocked as the POST/PUT API
+  // is not authorized for public tokens
+  if (templateType === TemplateType.Offer) {
+    return;
+  }
+
   if (!(await checkFolder(templateFolder))) {
-    logline(chalk.red(`${templateType} templates folder doesn't exist - will not deploy`));
+    logError(`${templateType} templates folder doesn't exist - will not deploy`);
     return;
   }
 
@@ -54,7 +76,7 @@ const deployTemplateTypes = async (
   const templatesToRun: string[] = await getFolders(templateFolder);
 
   if (templatesToRun.length === 0) {
-    logline(chalk.red(`No ${templateType} templates found - will not deploy`));
+    logError(`No ${templateType} templates found - will not deploy`);
   }
 
   await Promise.all(

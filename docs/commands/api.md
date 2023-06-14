@@ -8,16 +8,16 @@ The API commands should never be used by a public application. Your Sitecore CDP
 
 All authentication commands start with `auth`.
 
-| Subcommand | Description                                                     | Parameters                                                                              |
-| :--------: | :-------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-|   login    | Required command to create access token for future CLI commands | -id, --clientId<br />-s, --clientSecret<br />-l, --location _optional_ (defaults to EU) |
-|   status   | View Authentication/Service Url information                     | \<none>                                                                                 |
-|   logout   | Logout of the API                                               | \<none>                                                                                 |
+| Subcommand | Description                                                     | Parameters                                                                                                                                                                                              |
+| :--------: | :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|   login    | Required command to create access token for future CLI commands | -id, --clientId<br />-s, --clientSecret<br />-c, --cloudPortal _optional_ (to use the Cloud Portal authentication, pass parameter, otherwise its false)<br />-l, --location _optional_ (defaults to EU) |
+|   status   | View Authentication/Service Url information                     | \<none>                                                                                                                                                                                                 |
+|   logout   | Logout of the API                                               | \<none>                                                                                                                                                                                                 |
 
 ### Example
 
 ```bash
-npx sitecore-cdp-serializer auth login -id {Client Key} -s {API Token} -l {EU|US|APJ}
+npx sitecore-cdp-serializer auth login -id {Client Key} -s {API Token} -c {True|False} -l {EU|US|APJ}
 ```
 
 ## Template Commands
@@ -39,3 +39,7 @@ npx sitecore-cdp-serializer templates get --friendlyId 'sitecore_test_template_1
 ### Notes
 
 In order to run a templates command, you must have already run an `auth login` command to authenticate to the tenant you wish to access templates from.
+
+### Warning
+
+> :warning: Currently JS Modules support only allows for a single push and once published they cannot be modified even by the API. This means that if you have already published a JS Module, you will need to delete it from the tenant before you can run a deploy command again. This is a limitation of the API and not the CLI.
