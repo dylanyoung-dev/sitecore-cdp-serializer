@@ -19,9 +19,6 @@ export const Authenticate = async (
     logline(chalk.red('Auth URL not set, re-run auth command'));
   }
 
-  console.log(authUrl);
-  console.log(isCloudPortal);
-
   // Authentication is completely different for Cloud Portal
   if (isCloudPortal) {
     await HandleCloudPortalAuthentication(clientId, clientSecret, authUrl, isStaging);
