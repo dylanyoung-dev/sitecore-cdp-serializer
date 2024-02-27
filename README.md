@@ -3,7 +3,7 @@
 
 # Installation
 
-Sitecore CDP serializer requires [Node.js](https://nodejs.org) version 20 or above. To install, run the following commands from any directory in your terminal:
+Sitecore CDP serializer requires [Node.js](https://nodejs.org) version 16.17 or above. To install, run the following commands from any directory in your terminal:
 
 ```bash
 npm install sitecore-cdp-serializer -g
@@ -36,13 +36,11 @@ Commands to pick up local artifacts and deploy to a Sitecore CDP/Personalize ten
 You can get setup for local development by cloning the repository and running the following commands:
 
 ```bash
-npm run start:windows
+npm run dev
 ```
 
-or Linux/MacOS
+This will start the app in the current terminal window, where changes to the current files, will be reflected immediately in the app using `tsup`. You can then start a separate terminal to run commands using the local version of the app. For example:
 
 ```bash
-npm run start
+node dist/index.js auth status
 ```
-
-This will start the app in the current terminal window, where changes to the current files, will be reflected immediately in the app. It is suggested while your running the above start commands, that you start a new window and run any of the commands for this CLI (see above).

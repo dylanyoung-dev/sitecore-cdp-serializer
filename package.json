@@ -3,15 +3,16 @@
   "version": "0.2.1",
   "description": "A Sitecore CDP/Personalize Serialization tool to abstract the APIs related to Tenant asset management and automated deployments from Source Control and/or physical files",
   "type": "module",
-  "exports": "./lib/index.js",
+  "exports": "./dist/index.js",
+  "bin": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -p .",
+    "dev": "tsup --watch",
+    "build": "tsup",
     "start": "nodemon --watch 'src/**/*.ts' --exec 'npx ts-node' ./src/bin/index.ts",
-    "start:windows": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node -P ./tsconfig.json\" ./src/bin/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "bin": {
-    "sitecore-cdp-serializer": "./lib/bin/index.js"
+    "start:windows": "ts-node-dev ./src/bin/index.ts"
   },
   "repository": {
     "type": "git",
@@ -34,15 +35,17 @@
     "configstore": "6.0.0",
     "js-yaml": "4.1.0",
     "json-diff": "0.9.0",
-    "node-fetch": "3.2.10"
+    "node-fetch": "3.2.10",
+    "ora": "^8.0.1"
   },
   "devDependencies": {
     "@types/configstore": "6.0.0",
     "@types/js-yaml": "4.0.5",
     "@types/json-diff": "0.7.0",
     "@types/node": "18.6.3",
+    "copyfiles": "^2.4.1",
     "nodemon": "^2.0.19",
-    "ts-node": "^10.9.2",
+    "tsup": "^6.6.3",
     "typescript": "^4.7.4"
   }
 }

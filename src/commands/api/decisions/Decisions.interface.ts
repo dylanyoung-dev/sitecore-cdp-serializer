@@ -1,18 +1,20 @@
-interface DecisionDefinition {
+export interface DecisionDefinition {
   clientKey?: string;
   href?: string;
   ref?: string;
   name: string;
-  revision: number;
+  revision?: number;
   archived: boolean;
   deploymentConfiguration: DeploymentConfiguration;
-  tags: string[];
+  tags?: string[];
   variants: {
     href: string;
   };
   revisions: {
     href: string;
   };
+  inProduction: boolean;
+  offers?: string[];
   sampleSizeCConfig: {
     baseValue: string;
     minimumDetectableEffect: string;
@@ -20,14 +22,14 @@ interface DecisionDefinition {
   };
 }
 
-interface DeploymentConfiguration {
+export interface DeploymentConfiguration {
   name: string;
 }
 
-interface Variant {
+export interface Variant {
   name: string;
 }
 
-interface Revision {
+export interface Revision {
   name: string;
 }

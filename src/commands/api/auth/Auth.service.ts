@@ -138,7 +138,6 @@ const initAuthCommands = (program: Command, config: Configstore) => {
     .description('View Authentication/Service Url information')
     .action(async (options) => {
       logline(`Access Token: ${JSON.stringify(globalConfig.get('credentials'), null, 2)}`);
-      logline();
       logline(`Service Url: ${globalConfig.get('serviceUrl')}`);
     });
 
