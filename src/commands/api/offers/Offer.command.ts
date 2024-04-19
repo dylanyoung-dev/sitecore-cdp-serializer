@@ -1,11 +1,8 @@
-import Configstore from 'configstore';
 import { Command } from 'commander';
-import {
-  OfferTemplate,
-  Offer,
-} from "./Offer.interface.js";
-import { OfferService } from './Offer.service.js';
+import Configstore from 'configstore';
 import { logline } from '../../../utils/index.js';
+import { OfferService } from './Offer.service.js';
+import { Offer, OfferTemplate } from './index.js';
 
 const initOfferCommands = (program: Command, config: Configstore) => {
   const offerService = OfferService(config);
@@ -63,7 +60,7 @@ const initOfferCommands = (program: Command, config: Configstore) => {
         logline(JSON.stringify(offer, null, 2));
       }
     });
-  // #endregion offers 
+  // #endregion offers
 };
 
-export { initOfferCommands }
+export { initOfferCommands };

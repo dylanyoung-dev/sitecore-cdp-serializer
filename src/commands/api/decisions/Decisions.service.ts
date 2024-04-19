@@ -1,47 +1,54 @@
-import { Command } from 'commander';
 import Configstore from 'configstore';
+import { Ora } from 'ora';
+import { logError } from '../../../utils/index.js';
 import { BaseService } from '../Base.service.js';
-import { logError, logResponse, logSuccess, logline } from '../../../utils/index.js';
 import { DecisionDefinition } from './Decisions.interface.js';
 
-const DecisionService = (config: Configstore) => {
+export const DecisionService = (config: Configstore) => {
   const baseService = BaseService(config);
 
-  const GetAllDecisions = async () => {
+  const GetAllDecisions = async (spinner: Ora) => {
     try {
       let serviceUrl = 'v2/decisionModelDefinitions';
 
       const response = await baseService.Get(serviceUrl);
 
       if (response.ok) {
-        logSuccess('success');
         let decisions: DecisionDefinition[] = (await response.json()) as DecisionDefinition[];
 
-        if (decisions) {
-          logline(JSON.stringify(decisions, null, 2));
-        }
+        spinner.succeed(`Decisions retrieved successfully\n\n${JSON.stringify(decisions, null, 2)}`);
 
         return decisions;
       } else {
-        logResponse(response, 'Failed to retrieve decisions');
+        spinner.fail('Failed to retrieve decisions');
       }
     } catch (ex) {
+      spinner.fail(`Failed to retrieve decisions with error: ${ex}`);
+    }
+  };
+
+  const GetDecisionDefinitionById = async (id: string, spinner: Ora) => {
+    try {
+      const response = await baseService.Get(`v2/decisionModelDefinitions/${id}`);
+
+      if (response.ok) {
+        let decision: DecisionDefinition = (await response.json()) as DecisionDefinition;
+
+        spinner.succeed('Decision retrieved successfully\n\n' + JSON.stringify(decision, null, 2));
+
+        return decision;
+      } else {
+        spinner.fail('Failed to retrieve decision');
+      }
+    } catch (ex) {
+      spinner.fail(`Failed to retrieve decision with error: ${ex}`);
       logError(ex);
     }
   };
 
-  return { GetAllDecisions };
+  const CreateDecision = async (decision: DecisionDefinition, spinner: Ora) => {};
+
+  const UpdateDecision = async (decision: DecisionDefinition, spinner: Ora) => {};
+
+  return { GetAllDecisions, GetDecisionDefinitionById, CreateDecision, UpdateDecision };
 };
-
-const initDecisionCommands = (program: Command, config: Configstore) => {
-  const decisionService = DecisionService(config);
-
-  const decisionCommands = program
-    .command('decisions')
-    .description('List all Decisions')
-    .action(async (options) => {
-      await decisionService.GetAllDecisions();
-    });
-};
-
-export { initDecisionCommands, DecisionService };

@@ -1,35 +1,28 @@
-import Configstore from "configstore";
+import Configstore from 'configstore';
 import { Response } from 'node-fetch';
-import { BaseService } from '../Base.service.js'
-import {
-  logSuccess,
-  logError,
-  logResponse,
-} from '../../../utils/index.js';
-import {
-  OfferTemplate,
-  Offer,
-} from "./Offer.interface.js";
-import { BaseResponse } from "../BaseResponse.interface.js";
+import { logError, logResponse, logSuccess } from '../../../utils/index.js';
+import { BaseService } from '../Base.service.js';
+import { BaseResponse } from '../BaseResponse.interface.js';
+import { Offer, OfferTemplate } from './index.js';
 
 export const OfferService = (config: Configstore) => {
   const baseService = BaseService(config);
 
   // #region Offer Templates
-  const GetAllOfferTemplates = async() => {
+  const GetAllOfferTemplates = async () => {
     try {
       const response: Response = await baseService.Get('v3/offerTemplates');
-  
+
       if (response.ok) {
         logSuccess('success');
-        let responseJson = await response.json() as BaseResponse;
-    
+        let responseJson = (await response.json()) as BaseResponse;
+
         return responseJson.items as OfferTemplate[];
       } else {
         logResponse(response, 'Failed to retrieve offer templates');
       }
     } catch (ex) {
-        logError(ex);
+      logError(ex);
     }
   };
 
@@ -55,33 +48,33 @@ export const OfferService = (config: Configstore) => {
   // #endregion
 
   // #region Offers
-  const GetAllOffers = async() => {
+  const GetAllOffers = async () => {
     try {
       const response: Response = await baseService.Get('v3/offers');
-  
+
       if (response.ok) {
-        let responseJson = await response.json() as BaseResponse;
-    
+        let responseJson = (await response.json()) as BaseResponse;
+
         return responseJson.items as Offer[];
       } else {
         logResponse(response, 'Failed to retrieve offers');
       }
     } catch (ex) {
-        logError(ex);
+      logError(ex);
     }
   };
 
-  const GetOfferByRef = async(ref:string) : Promise<Offer | null> => {
+  const GetOfferByRef = async (ref: string): Promise<Offer | null> => {
     try {
       const response: Response = await baseService.Get(`v3/offers/${ref}`);
-  
+
       if (response.ok) {
-        return await response.json() as Offer;
+        return (await response.json()) as Offer;
       } else {
         logResponse(response, `Failed to retrieve offer ${ref}`);
       }
     } catch (ex) {
-        logError(ex);
+      logError(ex);
     }
     return null;
   };
@@ -102,7 +95,7 @@ export const OfferService = (config: Configstore) => {
   //   } catch (ex) {
   //     logError(ex);
   //   }
-    
+
   //   return null;
   // };
 
@@ -132,5 +125,5 @@ export const OfferService = (config: Configstore) => {
     GetOfferTemplatesById,
     GetAllOffers,
     GetOfferByRef,
-  }
-}
+  };
+};

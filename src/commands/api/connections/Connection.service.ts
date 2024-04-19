@@ -1,54 +1,51 @@
-import chalk from 'chalk/index.js';
-import { Command } from 'commander';
 import Configstore from 'configstore';
-import { logline } from '../../../utils/index.js';
-import { AuthToken } from '../auth/Auth.interface.js';
+import { Ora } from 'ora';
+import { BaseService } from '../Base.service.js';
+import { ResponseCollection } from '../Common.interface.js';
+import { Connection } from './index.js';
 
-let globalConfig: Configstore;
+export const ConnectionService = (config: Configstore) => {
+  const baseService = BaseService(config);
 
-const GetAllConnections = async () => {
-  const credentials: AuthToken = globalConfig.get('credentials');
-  const serviceUrl = globalConfig.get('serviceUrl');
+  const GetAllConnections = async (spinner: Ora) => {
+    try {
+      let servicePath = `v2/connections`;
 
-  if (!serviceUrl) {
-    logline(chalk.red('Service URL not set, re-run auth command'));
-  }
+      const response = await baseService.Get(servicePath);
 
-  if (!credentials) {
-    logline(chalk.red('You must run the auth command first to initialize the CLI'));
-    return;
-  }
+      if (response.ok) {
+        let connections = (await response.json()) as ResponseCollection<Connection>;
 
-  let servicePath = `https://${serviceUrl}/v2/connections`;
+        spinner.succeed(`Connections retrieved successfully\n\n${JSON.stringify(connections, null, 2)}`);
 
-  const response: Response = await fetch(servicePath, {
-    method: 'get',
-    body: null,
-    headers: {
-      Authorization: `Bearer ${credentials.access_token}`,
-    },
-  });
+        return connections;
+      } else {
+        spinner.fail('Failed to retrieve connections');
+      }
+    } catch (ex) {
+      spinner.fail(`Failed to retrieve connections with error: ${ex}`);
+    }
+  };
 
-  if (response.ok) {
-  } else {
-  }
+  const GetConnectionByRef = async (connectionRef: string, spinner: Ora) => {
+    try {
+      let servicePath = `v2/connections/${connectionRef}`;
+
+      const response = await baseService.Get(servicePath);
+
+      if (response.ok) {
+        let connection = (await response.json()) as Connection;
+
+        spinner.succeed(`Connection retrieved successfully\n\n${JSON.stringify(connection, null, 2)}`);
+
+        return connection;
+      } else {
+        spinner.fail('Failed to retrieve connection');
+      }
+    } catch (ex) {
+      spinner.fail(`Failed to retrieve connection with error: ${ex}`);
+    }
+  };
+
+  return { GetAllConnections, GetConnectionByRef };
 };
-
-const initConnectionCommands = (program: Command, config: Configstore) => {
-  globalConfig = config;
-
-  const connectionCommands = program
-    .command('connections')
-    .description('List all Connections')
-    .action(async (options) => {
-      await GetAllConnections();
-    });
-
-  // Nested (Sub) Commands
-  connectionCommands
-    .command('get')
-    .option('--connectionRef <connectionRef>', 'Connection Reference')
-    .action(async (options) => {});
-};
-
-export { initConnectionCommands };

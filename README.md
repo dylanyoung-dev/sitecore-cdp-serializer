@@ -36,6 +36,8 @@ Commands to pick up local artifacts and deploy to a Sitecore CDP/Personalize ten
 You can get setup for local development by cloning the repository and running the following commands:
 
 ```bash
+npm install
+
 npm run dev
 ```
 

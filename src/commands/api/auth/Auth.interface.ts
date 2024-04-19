@@ -1,4 +1,4 @@
-interface AuthToken {
+export interface AuthToken {
   access_token?: string;
   x_access_token?: string;
   scope?: string;
@@ -7,5 +7,3 @@ interface AuthToken {
   refresh_token?: string;
   refresh_token_expires_in?: number;
 }
-
-export { AuthToken };

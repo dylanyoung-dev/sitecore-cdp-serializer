@@ -1,4 +1,4 @@
-interface Connection {
+export interface Connection {
   clientKey?: string;
   href?: string;
   ref?: string;
@@ -20,37 +20,27 @@ interface Connection {
   icon: string;
 }
 
-interface AuthType {
+export interface AuthType {
   authType: string;
 }
 
-interface RequestType {
+export interface RequestType {
   requestType: string;
   connectionUrl: string;
   requestBody: string;
 }
 
-interface InputMapping {}
+export interface InputMapping {}
 
-interface OutputMapping {
+export interface OutputMapping {
   label: string;
   outputReference: string;
   type: string;
 }
 
-interface CustomHeader {
+export interface CustomHeader {
   name: string;
   value: string;
 }
 
-interface UrlParameter {}
-
-export {
-  Connection,
-  AuthType,
-  RequestType,
-  InputMapping,
-  OutputMapping,
-  CustomHeader,
-  UrlParameter,
-};
+export interface UrlParameter {}
